@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <set>
 
 #include <opencv2/opencv.hpp>
@@ -12,6 +13,7 @@ namespace detector {
 
     using std::string;
     using std::vector;
+    using std::unordered_map;
     using std::set;
 
     enum ModelClass {
@@ -44,16 +46,18 @@ namespace detector {
         cv::dnn::Net _net;
         cv::Size _netInputSize;
 
-        int _cols;
-        int _rows;
+        int _cols{};
+        int _rows{};
 
-        cv::Mat forward(cv::Mat & );
+        cv::Mat forward(cv::Mat &);
 
     public:
 
         explicit MobileNetSSD(cv::Size);
-        void loadModel(const string & );
-        void detect(cv::Mat & , const set<int> & , const float & );
+
+        void loadModel(const string &);
+
+        void detect(cv::Mat &, const set<int> &, const float &);
 
     };
 

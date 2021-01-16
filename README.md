@@ -51,4 +51,4 @@ Some available classes can be found in table below:
 | tv monitor   | 20 |
 
 To make application detect multiple classes, you need specify special ```-c, --classes``` flag. Example:
-- ```video_detect -v /dev/video0 -m MobileNetSSD -c {8,12}``` - in this case app will detect only cats and dogs
+- ```video_detect --video-src /dev/video0 --model-path MobileNetSSD --classes {8,12}``` - in this case app will detect only cats and dogs using camera /dev/video0

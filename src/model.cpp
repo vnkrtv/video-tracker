@@ -4,6 +4,30 @@
 
 namespace detector {
 
+    unordered_map<int, string> class2name{
+            {CL_BACKGROUND, "Background"},
+            {CL_AEROPLANE, "Aeroplane"},
+            {CL_BICYCLE, "Bicycle"},
+            {CL_BIRD, "Bird"},
+            {CL_BOAT, "Boat"},
+            {CL_BOTTLE, "Bottle"},
+            {CL_BUS, "Bus"},
+            {CL_CAR, "Car"},
+            {CL_CAT, "Cat"},
+            {CL_CHAIR, "Chair"},
+            {CL_COW, "Cow"},
+            {CL_DINING_TABLE, "Dining table"},
+            {CL_DOG, "Dog"},
+            {CL_HORSE, "Horse"},
+            {CL_MOTORBIKE, "Motorbike"},
+            {CL_PERSON, "Person"},
+            {CL_POTTED_PLANT, "Potted plant"},
+            {CL_SHEEP, "Sheep"},
+            {CL_SOFA, "Sofa"},
+            {CL_TRAIN, "Train"},
+            {CL_TV_MONITOR, "TV Monitor"}
+    };
+
     cv::Mat MobileNetSSD::forward(cv::Mat &frame) {
         cv::Mat rgb, resizedFrame;
 
@@ -36,7 +60,7 @@ namespace detector {
             auto classId = static_cast<int>(classVec[1]);
             auto confidence = classVec[2];
             if (confidence > confCoefficient && classesSet.find(classId) != classesSet.end()) {
-                auto label = std::to_string(classId) + ": " + std::to_string(confidence);
+                auto label = class2name[classId] + ": " + std::to_string(int(100 * confidence)) + " %";
 
                 double heightFactor = frame.rows / 300.0;
                 double widthFactor = frame.cols / 300.0;
