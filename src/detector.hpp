@@ -1,10 +1,10 @@
 #include "tracker.hpp"
 
-#include <dlib/image_processing.h>
-#include <dlib/gui_widgets.h>
-#include <dlib/image_io.h>
-#include <dlib/dir_nav.h>
-#include <dlib/opencv/cv_image.h>
+//#include <dlib/image_processing.h>
+//#include <dlib/gui_widgets.h>
+//#include <dlib/image_io.h>
+//#include <dlib/dir_nav.h>
+//#include <dlib/opencv/cv_image.h>
 
 namespace detector {
 
@@ -25,11 +25,13 @@ namespace detector {
             std::cerr << "Error on loading MobileNetSSD model: " << e.what() << std::endl;
             return -1;
         }
-        auto cap = cv::VideoCapture(videoSrc);
+        cv::VideoCapture cap(videoSrc);
         if (!cap.isOpened()) {
             std::cerr << "Cannot open the video file" << std::endl;
             return -1;
         }
+        int maxDisappeared = 50;
+        CentroidTracker tracker(maxDisappeared);
 
         double dWidth = cap.get(cv::CAP_PROP_FRAME_WIDTH);
         double dHeight = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
@@ -48,10 +50,27 @@ namespace detector {
             }
 
             auto detectedObjects = net.detectObjects(frame, classesSet, confCoefficient);
+            auto boxesVec = vector<cv::Rect2i>();
             for (auto & obj : detectedObjects) {
+                boxesVec.emplace_back(obj.bbox);
                 cv::rectangle(frame, obj.bbox, (0, 0, 255), 1);
                 cv::putText(frame, obj.getLabel(), cv::Point2i(obj.bbox.x, obj.bbox.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5,
                             (255, 255, 255));
+            }
+            auto objects = tracker.update(boxesVec);
+            for (auto & [objectId, centroid] : objects) {
+                string text = "ID " + std::to_string(objectId);
+                cv::putText(frame,
+                            text,
+                            cv::Point2i(centroid.x - 10, centroid.y - 10),
+                            cv::FONT_HERSHEY_SIMPLEX,
+                            0.5,
+                            (255, 255, 255));
+                cv::circle(frame,
+                           cv::Point2i(centroid.x, centroid.y),
+                           4,
+                           (255, 255, 255),
+                           -1);
             }
 
             cv::imshow("VideoDetect", frame);
