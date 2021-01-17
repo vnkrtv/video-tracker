@@ -8,9 +8,13 @@
 
 #include <opencv2/opencv.hpp>
 
+//#include "json.h"
+
 
 namespace detector {
 
+//    using json = nlohmann::json;
+    using std::pair;
     using std::string;
     using std::vector;
     using std::unordered_map;
@@ -40,6 +44,16 @@ namespace detector {
         CL_TV_MONITOR
     };
 
+    struct DetectionResult {
+        int classId;
+        int confPercent;
+        cv::Rect2i bbox;
+
+        DetectionResult(int , int , cv::Rect2i);
+
+        string getLabel() const;
+    };
+
     class MobileNetSSD {
     private:
 
@@ -51,13 +65,15 @@ namespace detector {
 
         cv::Mat forward(cv::Mat &);
 
+        cv::Rect2i getDetectedObjBox(const cv::Mat &frame, const cv::Vec<float, 7> &classVec) const;
+
     public:
 
         explicit MobileNetSSD(cv::Size);
 
         void loadModel(const string &);
 
-        void detect(cv::Mat &, const set<int> &, const float &);
+        vector<DetectionResult> detectObjects(cv::Mat &, const set<int> &, const float &);
 
     };
 

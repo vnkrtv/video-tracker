@@ -1,4 +1,4 @@
-# video-detect
+# video-detectObjects
 
 ## Description
 
@@ -7,7 +7,8 @@ Coming soon...
 ## Installation
 
 - ```git clone https://github.com/vnkrtv/video-detector.git && cd video-detector```
-- ```git submodule add git@github.com:davisking/dlib.git```
+- ```cat goturn-files/goturn.caffemodel.zip* > goturn-files/goturn.caffemodel.zip```
+- ```unzip goturn-files/goturn.caffemodel.zip -d goturn-files/ && rm goturn-files/goturn.caffemodel.zip*```
 - ```cmake -DCMAKE_BUILD_TYPE=Debug .```
 - ```cmake --build cmake-build-debug --target video_detect -- -j 9```
 
@@ -24,7 +25,7 @@ Options:
 ```
 ## Model
 
-MobileNet is using in project for objects detection. Model is pre-trained and taken from https://github.com/chuanqi305/MobileNet-SSD//. It was trained in Caffe-SSD framework. This model can detect 20 classes.
+MobileNet is using in project for objects detection. Model is pre-trained and taken from https://github.com/chuanqi305/MobileNet-SSD//. It was trained in Caffe-SSD framework. This model can detectObjects 20 classes.
 Some available classes can be found in table below: 
 
 | Class name   | Class ID  |
@@ -51,5 +52,5 @@ Some available classes can be found in table below:
 | train        | 19 |
 | tv monitor   | 20 |
 
-To make application detect multiple classes, you need specify special ```-c, --classes``` flag. Example:
-- ```video_detect --video-src /dev/video0 --model-path MobileNetSSD --classes {8,12}``` - in this case app will detect only cats and dogs using camera /dev/video0
+To make application detectObjects multiple classes, you need specify special ```-c, --classes``` flag. Example:
+- ```video_detect --video-src /dev/video0 --model-path MobileNetSSD --classes {8,12}``` - in this case app will detectObjects only cats and dogs using camera /dev/video0
