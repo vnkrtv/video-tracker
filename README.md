@@ -6,7 +6,8 @@ Coming soon...
 
 ## Installation
 
-- ```git clone https://github.com/vnkrtv/video-detector.git && cd video-detector```  
+- ```git clone https://github.com/vnkrtv/video-detector.git && cd video-detector```
+- ```git submodule add git@github.com:davisking/dlib.git```
 - ```cmake -DCMAKE_BUILD_TYPE=Debug .```
 - ```cmake --build cmake-build-debug --target video_detect -- -j 9```
 

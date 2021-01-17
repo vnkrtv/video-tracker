@@ -1,6 +1,12 @@
 #include "model.hpp"
 
+#include <dlib/image_processing/correlation_tracker.h>
+#include <dlib/image_processing.h>
+
 namespace detector {
+
+    dlib::correlation_tracker()
+    dlib::re
 
     int videoDetection(const string &videoSrc, const string &modelPath, const set<int> & classesSet, const float & confCoefficient) {
         MobileNetSSD net(cv::Size(300, 300));
