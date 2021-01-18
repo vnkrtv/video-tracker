@@ -38,6 +38,8 @@ namespace detector {
 
         explicit Storage(const string &);
 
+        ~Storage();
+
         void createSchema();
 
         void insert(const Action &action);

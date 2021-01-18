@@ -20,6 +20,10 @@ namespace detector {
         }
     }
 
+    Storage::~Storage() {
+        sqlite3_close(_db);
+    }
+
     void Storage::createSchema() {
         string sql = "CREATE TABLE actions ("  \
                          "id         INT PRIMARY KEY NOT NULL," \
