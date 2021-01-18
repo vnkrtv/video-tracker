@@ -5,7 +5,7 @@
 #include "model.hpp"
 
 
-#define USE_TAXICAB_SQRT
+//#define USE_TAXICAB_SQRT
 
 namespace detector {
 
