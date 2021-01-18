@@ -1,4 +1,4 @@
-# video-detectObjects
+# video-tracker
 
 ## Description
 
@@ -6,11 +6,11 @@ Coming soon...
 
 ## Installation
 
-- ```git clone https://github.com/vnkrtv/video-detector.git && cd video-detector```
+- ```git clone https://github.com/vnkrtv/video-tracker.git && cd video-tracker```
 - ```cat goturn-files/goturn.caffemodel.zip* > goturn-files/goturn.caffemodel.zip```
 - ```unzip goturn-files/goturn.caffemodel.zip -d goturn-files/ && rm goturn-files/goturn.caffemodel.zip*```
 - ```cmake -DCMAKE_BUILD_TYPE=Debug .```
-- ```cmake --build cmake-build-debug --target video_detect -- -j 9```
+- ```cmake --build cmake-build-debug --target video_tracker -- -j 9```
 
 ## Usage
 ```
@@ -53,4 +53,4 @@ Some available classes can be found in table below:
 | tv monitor   | 20 |
 
 To make application detectObjects multiple classes, you need specify special ```-c, --classes``` flag. Example:
-- ```video_detect --video-src /dev/video0 --model-path MobileNetSSD --classes {8,12}``` - in this case app will detectObjects only cats and dogs using camera /dev/video0
+- ```video_tracker --video-src /dev/video0 --model-path MobileNetSSD --classes {8,12}``` - in this case app will detectObjects only cats and dogs using camera /dev/video0
