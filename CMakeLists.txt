@@ -6,7 +6,11 @@ project(video_tracker)
 
 #set(CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/bin/i686-linux-gnu-g++)
 set(USE_AVX_INSTRUCTIONS ON CACHE BOOL "Use AVX instructions")
+#set(DCMAKE_SHARED_LINKER_FLAGS " -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
+#set(DCMAKE_MODULE_LINKER_FLAGS " -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
+#set(DCMAKE_EXE_LINKER_FLAGS " -static-libgcc -static-libstdc++ -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
 #add_subdirectory(dlib)
+#add_subdirectory(opencv)
 
 add_executable(video_tracker src/main.cpp
         src/args.hpp src/argparse.hpp src/detector.hpp src/model.hpp
