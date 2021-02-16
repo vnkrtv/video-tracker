@@ -6,11 +6,34 @@ Coming soon...
 
 ## Installation
 
+### Clone repository and all submodules
 - ```git clone https://github.com/vnkrtv/video-tracker.git && cd video-tracker```
-- ```cat goturn-files/goturn.caffemodel.zip* > goturn-files/goturn.caffemodel.zip```
-- ```unzip goturn-files/goturn.caffemodel.zip -d goturn-files/ && rm goturn-files/goturn.caffemodel.zip*```
-- ```cmake -DCMAKE_BUILD_TYPE=Debug .```
-- ```cmake --build cmake-build-debug --target video_tracker -- -j 9```
+- ```git pull --recurse-submodules```
+- ```git submodule init```
+- ```git submodule update --remote --recursive```
+
+### OpenCV installation
+
+Installing all system requirements described in [this article](https://funvision.blogspot.com/2019/12/opencv-web-camera-and-video-streams-in.html)  
+After installing them is's able to build OpenCV
+
+- ```cd opencv```
+- ```mkdir build && cd build```
+- ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_GSTREAMER=ON -D WITH_FFMPEG=ON ..```
+- ```make -j8```
+- ```sudo make install```
+
+### dlib installation
+- ```cd dlib```
+- ```mkdir build && cd build```
+- ```cmake ..```
+- ```cmake --build . --config Release```
+- ```sudo make install```
+
+### Building application
+
+- ```cmake -DCMAKE_BUILD_TYPE=RELEASE .```
+- ```cmake --build cmake-build-release --target video_tracker -- -j 9```
 
 ## Usage
 ```

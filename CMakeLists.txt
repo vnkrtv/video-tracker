@@ -6,6 +6,8 @@ project(video_tracker)
 
 #set(CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/bin/i686-linux-gnu-g++)
 set(USE_AVX_INSTRUCTIONS ON CACHE BOOL "Use AVX instructions")
+set(WITH_GSTREAMER ON)
+set(WITH_FFMPEG=ON)
 #set(DCMAKE_SHARED_LINKER_FLAGS " -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
 #set(DCMAKE_MODULE_LINKER_FLAGS " -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
 #set(DCMAKE_EXE_LINKER_FLAGS " -static-libgcc -static-libstdc++ -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
@@ -22,11 +24,14 @@ add_executable(video_tracker src/main.cpp
 
 find_package(SQLite3 REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(dlib REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 target_link_libraries(video_tracker ${SQLite3_LIBS})
 target_link_libraries(video_tracker ${OpenCV_LIBS})
 target_link_libraries(video_tracker sqlite3)
-#target_link_libraries( video_tracker dlib::dlib)
+target_link_libraries(video_tracker dlib::dlib)
+
+#target_link_libraries(video_tracker dlib::dlib)
 
 #set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
