@@ -1,4 +1,4 @@
-#include "db.hpp"
+#include <chrono>
 
 #include <dlib/image_processing.h>
 #include <dlib/gui_widgets.h>
@@ -6,7 +6,11 @@
 #include <dlib/dir_nav.h>
 #include <dlib/opencv/cv_image.h>
 
+#include "db.hpp"
+
 namespace detector {
+
+    using namespace std::chrono;
 
     // Fill the vector with random colors
     void getRandomColors(vector<cv::Scalar> &colors, int numColors) {
@@ -30,32 +34,123 @@ namespace detector {
             std::cerr << "Cannot open the video file" << std::endl;
             return -1;
         }
-//        int maxDisappeared = 50;
-//        CentroidTracker centroidTracker(maxDisappeared);
 
         double dWidth = cap.get(cv::CAP_PROP_FRAME_WIDTH);
         double dHeight = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
         namedWindow("VideoDetect", cv::WINDOW_AUTOSIZE);
 
-        std::cout << "Frame size : " << dWidth << " x " << dHeight << std::endl;
+        std::clog << "Frame size : " << dWidth << " x " << dHeight << std::endl;
 
         cv::Mat frame, cvtFrame;
 
-//        TrackerType trType = TR_MIL;
-        map<int, dlib::correlation_tracker> trackers;  // objID: tracker
-        int objID = 0;
+        int frameCounter = 0;
+        double minTrackingQuality = 7.;
+        map<int, dlib::correlation_tracker> objTrackers;  // currentObjID: tracker
+        int currentObjID = 0;
+
 
         while (true) {
+            auto startTime = system_clock::now();
             bool bSuccess = cap.read(frame);
             if (!bSuccess) {
-                std::cout << "Cannot read a frame from video file" << std::endl;
+                std::cerr << "Cannot read a frame from video file" << std::endl;
                 break;
             }
-            cvtColor(frame, cvtFrame, cv::COLOR_RGB2GRAY);
-            dlib::cv_image<unsigned char> img(cvtFrame);
+            frameCounter++;
+            dlib::cv_image<unsigned char> img(frame);
 
-            auto detectedObjects = net.detectObjects(frame, classesSet, confCoefficient);
+            vector<int> objIDsToDelete;
+            for (auto &[objID, tracker]: objTrackers) {
+                double trackingQuality = tracker.update(img);
+                if (trackingQuality < minTrackingQuality) {
+                    objIDsToDelete.emplace_back(objID);
+                }
+            }
+            for (auto &objID: objIDsToDelete) {
+                std::clog << "Remove objID: " << objID << " from lost of trackers" << std::endl;
+                objTrackers.erase(objID);
+            }
+
+            if (!(frameCounter % 10)) {
+                cvtColor(frame, cvtFrame, cv::COLOR_RGB2GRAY);
+                dlib::cv_image<unsigned char> cvtImg(cvtFrame);
+
+                auto detectedObjects = net.detectObjects(frame, classesSet, confCoefficient);
+                for (auto &obj : detectedObjects) {
+                    auto bbox = obj.bbox;
+                    int x = bbox.x;
+                    int y = bbox.y;
+                    int width = bbox.width;
+                    int height = bbox.height;
+
+                    int xBar = x + static_cast<int>(0.5 * width);
+                    int yBar = y + static_cast<int>(0.5 * height);
+
+                    int matchObjID = -1;
+                    for (auto &[objID, tracker]: objTrackers) {
+                        auto trackedPosition = tracker.get_position();
+
+                        int tx = static_cast<int>(trackedPosition.left());
+                        int ty = static_cast<int>(trackedPosition.top());
+                        int tWidth = static_cast<int>(trackedPosition.width());
+                        int tHeight = static_cast<int>(trackedPosition.height());
+
+                        int txBar = tx + static_cast<int>(0.5 * tWidth);
+                        int tyBar = ty + static_cast<int>(0.5 * tHeight);
+
+                        bool pred = (tx <= xBar <= (tx + tWidth)) &&
+                                    (ty <= yBar <= (tx + tHeight)) &&
+                                    (y <= tyBar <= (y + height));
+                        if (pred) {
+                            matchObjID = objID;
+                        }
+                    }
+                    if (matchObjID == -1) {
+                        std::clog << "Creating new tracker: objID(" << currentObjID << ")" << std::endl;
+                        dlib::correlation_tracker tracker;
+                        tracker.start_track(cvtImg, dlib::rectangle(x, y, x + width, y + height));
+                        objTrackers[currentObjID++] = tracker;
+                    }
+
+                }
+            }
+
+            for (auto &[objID, tracker]: objTrackers) {
+                auto trackedPosition = tracker.get_position();
+
+                int tx = static_cast<int>(trackedPosition.left());
+                int ty = static_cast<int>(trackedPosition.top());
+                int tWidth = static_cast<int>(trackedPosition.width());
+                int tHeight = static_cast<int>(trackedPosition.height());
+
+                string label = "ObjectID(" + std::to_string(objID) + ")";
+                auto bbox = cv::Rect2i(tx, ty, tx + tWidth, ty + tHeight);
+                cv::rectangle(frame, bbox, (0, 0, 255), 1);
+                cv::putText(frame, label, cv::Point2i(bbox.x, bbox.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                            (255, 255, 255));
+            }
+
+            auto endTime = system_clock::now();
+
+            cv::imshow("VideoDetect", frame);
+
+            if (cv::waitKey(30) == 27) {
+                std::cout << "Esc key is pressed by user. Bye!" << std::endl;
+                break;
+            }
+
+        }
+        cv::destroyAllWindows();
+        return 0;
+    }
+
+} // namespace detector
+
+//        int maxDisappeared = 50;
+//        CentroidTracker centroidTracker(maxDisappeared);
+//        TrackerType trType = TR_MIL;
+
 //            auto boxesVec = vector<cv::Rect2i>();
 //            for (auto & obj : detectedObjects) {
 //                boxesVec.emplace_back(obj.bbox);
@@ -79,45 +174,8 @@ namespace detector {
 //                           -1);
 //            }
 
-            for (auto & obj : detectedObjects) {
-                auto bbox = obj.bbox;
-
-                for (auto & [objID, tracker]: trackers) {
-                    if (tracker->update(frame, bbox)) {
-                        cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
-                    }
-                }
 
 
-                int matchObjID = -1;
-                for (auto & [objID, tracker]: trackers) {
-                    if (tracker->update(frame, bbox)) {
-                        matchObjID = objID;
-                        cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
-                    }
-                }
-                if (matchObjID == -1) {
-                    // Creating new tracker
-                    auto tracker = new ObjectTracker(trType);
-                    tracker->init(frame, bbox);
-                    trackers[objID++] = tracker;
-                }
-
-            }
-
-            cv::imshow("VideoDetect", frame);
-
-            if (cv::waitKey(30) == 27) {
-                std::cout << "Esc key is pressed by user. Bye!" << std::endl;
-                break;
-            }
-
-        }
-        cv::destroyAllWindows();
-        return 0;
-    }
-
-} // namespace detector
 
 //        vector<cv::Rect> bboxesVec;
 //        cap >> frame;
