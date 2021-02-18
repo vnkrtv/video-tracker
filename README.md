@@ -2,7 +2,7 @@
 
 ## Description
 
-Coming soon...
+Application for tracking various objects in video stream. 
 
 ## Installation
 

@@ -1,9 +1,6 @@
 [submodule "dlib"]
 	path = dlib
 	url = git@github.com:davisking/dlib.git
-[submodule "goturn-files"]
-	path = goturn-files
-	url = git@github.com:spmallick/goturn-files.git
 [submodule "opencv"]
 	path = opencv
 	url = https://github.com/opencv/opencv.git
