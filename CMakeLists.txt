@@ -19,7 +19,7 @@ set(WITH_FFMPEG=ON)
 
 add_executable(video_tracker src/main.cpp
         src/args.hpp src/argparse.hpp src/detector.hpp src/model.hpp
-        src/model.cpp src/tracker.cpp src/tracker.hpp src/db.cpp src/db.hpp)
+        src/model.cpp src/object_tracker.cpp src/object_tracker.hpp src/db.cpp src/db.hpp src/centroid_tracker.cpp src/centroid_tracker.hpp)
 
 #set_target_properties(video_detect PROPERTIES LINK_SEARCH_START_STATIC 1)
 #set_target_properties(video_detect PROPERTIES LINK_SEARCH_END_STATIC 1)

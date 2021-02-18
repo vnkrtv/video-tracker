@@ -1,11 +1,5 @@
 #include <chrono>
 
-#include <dlib/image_processing.h>
-#include <dlib/gui_widgets.h>
-#include <dlib/image_io.h>
-#include <dlib/dir_nav.h>
-#include <dlib/opencv/cv_image.h>
-
 #include "db.hpp"
 
 namespace detector {
@@ -30,6 +24,7 @@ namespace detector {
             std::cerr << "Error on loading MobileNetSSD model: " << e.what() << std::endl;
             return -1;
         }
+
         cv::VideoCapture cap(videoSrc);
         if (!cap.isOpened()) {
             std::cerr << "Cannot open the video file" << std::endl;
@@ -37,20 +32,15 @@ namespace detector {
         }
         std::clog << "Opened video source: " << videoSrc << std::endl;
 
+        namedWindow("Video tracker", cv::WINDOW_AUTOSIZE);
         double dWidth = cap.get(cv::CAP_PROP_FRAME_WIDTH);
         double dHeight = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-
-        namedWindow("Video tracker", cv::WINDOW_AUTOSIZE);
-
         std::clog << "Frame size : " << dWidth << " x " << dHeight << std::endl;
 
-        cv::Mat frame, cvtFrame;
-
+        cv::Mat frame;
         int frameCounter = 0;
         double minTrackingQuality = 7.;
-        map<int, dlib::correlation_tracker> objTrackers;  // currentObjID: tracker
-        map<int, string> objLabels;
-        int currentObjID = 0;
+        MultiTracker multiTracker(minTrackingQuality);
 
         do {
             auto startTime = system_clock::now();
@@ -61,74 +51,18 @@ namespace detector {
             }
             dlib::cv_image<dlib::bgr_pixel> img(cvIplImage(frame));
 
-            vector<int> objIDsToDelete;
-            for (auto &[objID, tracker]: objTrackers) {
-                double trackingQuality = tracker.update(img);
-                if (trackingQuality < minTrackingQuality) {
-                    objIDsToDelete.emplace_back(objID);
-                }
-            }
-            for (auto &objID: objIDsToDelete) {
-                std::clog << "Remove tracker with ID: " << objID << " from list of trackers" << std::endl;
-                objTrackers.erase(objID);
-            }
-
+            multiTracker.update(img);
             if (!(frameCounter % 10)) {
                 auto detectedObjects = net.detectObjects(frame, classesSet, confCoefficient);
-                for (auto &obj : detectedObjects) {
-                    auto bbox = obj.bbox;
-                    int x = bbox.x;
-                    int y = bbox.y;
-                    int width = bbox.width;
-                    int height = bbox.height;
-
-                    int xBar = x + static_cast<int>(0.5 * width);
-                    int yBar = y + static_cast<int>(0.5 * height);
-
-                    int matchObjID = -1;
-                    for (auto &[objID, tracker]: objTrackers) {
-                        auto trackedPosition = tracker.get_position();
-
-                        int tx = static_cast<int>(trackedPosition.left());
-                        int ty = static_cast<int>(trackedPosition.top());
-                        int tWidth = static_cast<int>(trackedPosition.width());
-                        int tHeight = static_cast<int>(trackedPosition.height());
-
-                        int txBar = tx + static_cast<int>(0.5 * tWidth);
-                        int tyBar = ty + static_cast<int>(0.5 * tHeight);
-
-                        bool pred = (tx <= xBar) && (xBar <= (tx + tWidth)) &&
-                                    (ty <= yBar) && (yBar <= (ty + tHeight)) &&
-                                    (x <= txBar) && (txBar <= (x + width)) &&
-                                    (y <= tyBar) && (tyBar <= (y + height));
-                        if (pred) {
-                            matchObjID = objID;
-                        }
-                    }
-                    if (matchObjID == -1) {
-                        std::clog << "Create new tracker: ID(" << currentObjID << ")" << std::endl;
-                        dlib::correlation_tracker tracker;
-                        tracker.start_track(img, dlib::rectangle(x, y, x + width, y + height));
-                        objTrackers[currentObjID] = tracker;
-                        objLabels[currentObjID] = obj.getLabel();
-                        currentObjID++;
-                    }
-                }
+                multiTracker.addTrackers(img, detectedObjects);
             }
 
-            for (auto &[objID, tracker]: objTrackers) {
-                auto trackedPosition = tracker.get_position();
-
-                int tx = static_cast<int>(trackedPosition.left());
-                int ty = static_cast<int>(trackedPosition.top());
-                int tWidth = static_cast<int>(trackedPosition.width());
-                int tHeight = static_cast<int>(trackedPosition.height());
-
-                auto bbox = cv::Rect2i(tx, ty, tWidth, tHeight);
+            for (auto &[objID, tracker]: multiTracker.getTrackers()) {
+                auto bbox = multiTracker.getObjectBbox(tracker);
                 cv::rectangle(frame, bbox, (0, 0, 255), 2);
                 cv::putText(frame, "ID: " + std::to_string(objID), cv::Point2i(bbox.x, bbox.y - 18), cv::FONT_HERSHEY_SIMPLEX, 0.5,
                             (255, 255, 255));
-                cv::putText(frame, objLabels[objID], cv::Point2i(bbox.x, bbox.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                cv::putText(frame, multiTracker.getLabel(objID), cv::Point2i(bbox.x, bbox.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5,
                             (255, 255, 255));
             }
 
@@ -199,8 +133,8 @@ namespace detector {
 //            multiTracker->add(createTrackerByName(trackerType), frame, Rect2d(bboxes[i]));
 //
 //        TrackerType trType = TR_MIL;
-//        auto trackers = vector<ObjectTracker>();
-//        vector<dlib::correlation_tracker> trackers;
+//        auto getTrackers = vector<MultiTracker>();
+//        vector<dlib::correlation_tracker> getTrackers;
 
 
 
