@@ -8,12 +8,8 @@
 
 #include <opencv2/opencv.hpp>
 
-//#include "json.h"
-
-
 namespace detector {
 
-//    using json = nlohmann::json;
     using std::pair;
     using std::string;
     using std::vector;
@@ -51,25 +47,22 @@ namespace detector {
 
         DetectionResult(int , int , cv::Rect2i);
 
-        string getLabel() const;
+        [[nodiscard]] string getLabel() const;
     };
 
     class MobileNetSSD {
     private:
 
         cv::dnn::Net _net;
-        cv::Size _netInputSize;
 
         int _cols{};
         int _rows{};
 
         cv::Mat forward(cv::Mat &);
 
-        cv::Rect2i getDetectedObjBox(const cv::Mat &frame, const cv::Vec<float, 7> &classVec) const;
+        [[nodiscard]] cv::Rect2i getDetectedObjBox(const cv::Mat &frame, const cv::Vec<float, 7> &classVec) const;
 
     public:
-
-        explicit MobileNetSSD(cv::Size);
 
         void loadModel(const string &);
 

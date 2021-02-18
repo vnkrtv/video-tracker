@@ -32,36 +32,26 @@ namespace detector {
             classId(_classId), confPercent(_confPercent), bbox(std::move(_bbox)) {}
 
     string DetectionResult::getLabel() const {
-        return class2name[classId] + ": " + std::to_string(confPercent) + " %";
+        return class2name[classId] + ": " + std::to_string(confPercent) + "%";
     }
 
     cv::Mat MobileNetSSD::forward(cv::Mat &frame) {
-        cv::Mat rgb, resizedFrame;
+        _cols = frame.cols;
+        _rows = frame.rows;
 
-        cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
-        cv::resize(rgb, resizedFrame, _netInputSize);
-
-        _cols = resizedFrame.cols;
-        _rows = resizedFrame.rows;
-
-        auto blob = cv::dnn::blobFromImage(resizedFrame, 1.0 / 255, _netInputSize, 127.5);
+        auto blob = cv::dnn::blobFromImage(frame, 1.0 / 255, cv::Size_<int>(_cols, _rows), 127.5);
         _net.setInput(blob);
         return std::move(_net.forward());
     }
 
     cv::Rect2i MobileNetSSD::getDetectedObjBox(const cv::Mat &frame, const cv::Vec<float, 7> &classVec) const {
-        double heightFactor = frame.rows / 300.0;
-        double widthFactor = frame.cols / 300.0;
-
-        int xLeftBottom = static_cast<int>( static_cast<int>(classVec[3] * float(_cols)) * widthFactor );
-        int yLeftBottom = static_cast<int>( static_cast<int>(classVec[4] * float(_rows)) * heightFactor );
-        int xRightTop = static_cast<int>( static_cast<int>(classVec[5] * float(_cols)) * widthFactor );
-        int yRightTop = static_cast<int>( static_cast<int>(classVec[6] * float(_rows)) * heightFactor );
+        int xLeftBottom = static_cast<int>( static_cast<int>(classVec[3] * float(_cols)) );
+        int yLeftBottom = static_cast<int>( static_cast<int>(classVec[4] * float(_rows)) );
+        int xRightTop = static_cast<int>( static_cast<int>(classVec[5] * float(_cols)) );
+        int yRightTop = static_cast<int>( static_cast<int>(classVec[6] * float(_rows)) );
 
         return cv::Rect2i(cv::Point2i(xLeftBottom, yLeftBottom), cv::Point2i(xRightTop, yRightTop));
     }
-
-    MobileNetSSD::MobileNetSSD(cv::Size netInputSize) : _netInputSize(std::move(netInputSize)) {}
 
     void MobileNetSSD::loadModel(const string &modelPath) {
         _net = cv::dnn::readNetFromCaffe(

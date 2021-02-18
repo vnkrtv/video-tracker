@@ -13,8 +13,8 @@ set(WITH_FFMPEG=ON)
 #set(DCMAKE_EXE_LINKER_FLAGS " -static-libgcc -static-libstdc++ -Wl,-rpath-link $FFMPEG_LIBDIR -L$FFMPEG_LIBDIR")
 #add_subdirectory(dlib)
 #add_subdirectory(opencv)
-add_library(dlib SHARED IMPORTED)
-set_target_properties(dlib PROPERTIES IMPORTED_LOCATION "dlib/build/dlib/libdlib.a")
+#add_library(dlib SHARED IMPORTED)
+#set_target_properties(dlib PROPERTIES IMPORTED_LOCATION "dlib/build/dlib/libdlib.a")
 #include(dlib/cmake)
 
 add_executable(video_tracker src/main.cpp
@@ -33,6 +33,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(video_tracker ${SQLite3_LIBS})
 target_link_libraries(video_tracker ${OpenCV_LIBS})
 target_link_libraries(video_tracker sqlite3)
-#target_link_libraries(video_tracker dlib::dlib)
+target_link_libraries(video_tracker dlib)
 
 #set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")

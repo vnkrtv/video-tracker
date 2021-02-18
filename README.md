@@ -19,21 +19,21 @@ After installing them is's able to build OpenCV
 
 - ```cd opencv```
 - ```mkdir build && cd build```
-- ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_GSTREAMER=ON -D WITH_FFMPEG=ON ..```
-- ```make -j8```
+- ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_GSTREAMER=ON -D WITH_FFMPEG=ON [-D WITH_CUDA=ON -D ENABLE_FAST_MATH=1 -D CUDA_FAST_MATH=1 -D WITH_CUBLAS=1]..```
+- ```make [-j 9]```
 - ```sudo make install```
 
 ### dlib installation
-- ```cd dlib```
+- ```cd dlib/dlib```
 - ```mkdir build && cd build```
-- ```cmake ..```
-- ```cmake --build . --config Release```
+- ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=1 -D USE_AVX_INSTRUCTIONS=ON [-D DLIB_USE_CUDA=1] ..```
+- ```make [-j 9]```
 - ```sudo make install```
 
 ### Building application
 
 - ```cmake -DCMAKE_BUILD_TYPE=RELEASE .```
-- ```cmake --build cmake-build-release --target video_tracker -- -j 9```
+- ```cmake --build cmake-build-release --target video_tracker [-- -j 9]```
 
 ## Usage
 ```
