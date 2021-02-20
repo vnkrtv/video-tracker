@@ -67,6 +67,10 @@ namespace detector {
             }
 
             auto endTime = system_clock::now();
+            auto duration = duration_cast<milliseconds>(endTime - startTime).count();
+            auto fps = 1000. / duration;
+            cv::putText(frame, "FPS: " + std::to_string(fps), cv::Point2i(15, 15), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255));
 
             frameCounter++;
             cv::imshow("Video tracker", frame);
