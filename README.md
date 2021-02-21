@@ -2,7 +2,7 @@
 
 ## Description
 
-Application for tracking various objects in video stream. 
+Application for tracking various objects and estimating their speed in video stream. 
 
 ## Installation
 

@@ -30,7 +30,7 @@ namespace detector {
 
         void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &, const vector<DetectionResult> &);
 
-        [[nodiscard]] cv::Rect2i getObjectBbox(const dlib::correlation_tracker &) const;
+        [[nodiscard]] static cv::Rect2i getObjectBbox(const dlib::correlation_tracker &) ;
 
         [[nodiscard]] map<int, dlib::correlation_tracker> getTrackers() const;
 

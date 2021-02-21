@@ -69,7 +69,7 @@ namespace detector {
         }
     }
 
-    [[nodiscard]] cv::Rect2i MultiTracker::getObjectBbox(const dlib::correlation_tracker &tracker) const {
+    [[nodiscard]] cv::Rect2i MultiTracker::getObjectBbox(const dlib::correlation_tracker &tracker) {
         auto trackedPosition = tracker.get_position();
 
         int tx = static_cast<int>(trackedPosition.left());

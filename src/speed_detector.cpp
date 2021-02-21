@@ -31,13 +31,15 @@ namespace detector {
                                         const cv::Point2i &curLoc,
                                         const cv::Rect2i &bbox,
                                         const double &fps) {
+        // TODO: nihuy'a ne rabotaet, nado razbirat'sya
         auto dPixels = getDist(prevLoc.x, curLoc.x, prevLoc.y, curLoc.y);
         std::clog << "dPixels: " << dPixels << std::endl;
-        auto ppm = 8.8; //(bbox.height / bbox.width);
-        std::clog << "ppm: " << ppm << std::endl;
-        auto dMeters = dPixels / ppm;
+        auto pixelPerMeter = (bbox.height / bbox.width);
+        std::clog << "pixelPerMeter: " << pixelPerMeter << std::endl;
+        auto dMeters = dPixels / pixelPerMeter;
         std::clog << "dMeters: " << dMeters << std::endl;
-        auto speed = dMeters * fps * 3.6; // 3.6 - m/s => km/h
+        auto toKmPerHour = 3.6;
+        auto speed = dMeters * fps * toKmPerHour;
         return speed;
     }
 

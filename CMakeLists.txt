@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 20)
 project(video_tracker)
 
 add_executable(video_tracker src/main.cpp
-        src/args.hpp src/argparse.hpp src/detector.hpp src/model.hpp
+        src/args.hpp src/argparse.hpp src/processor.hpp src/model.hpp
         src/model.cpp src/multitracker.cpp src/multitracker.hpp
         src/db.cpp src/db.hpp
-        src/speed_detector.cpp src/speed_detector.hpp)
+        src/speed_detector.cpp src/speed_detector.hpp src/processor.cpp)
 
 find_package(SQLite3 REQUIRED)
 find_package(OpenCV REQUIRED)

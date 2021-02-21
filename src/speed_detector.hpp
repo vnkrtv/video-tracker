@@ -9,7 +9,6 @@
 namespace detector {
 
     using std::map;
-    using std::unordered_map;
 
     struct DetectedObject {
 
