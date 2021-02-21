@@ -1,4 +1,4 @@
-#include "object_tracker.hpp"
+#include "multitracker.hpp"
 
 namespace detector {
 
@@ -8,12 +8,15 @@ namespace detector {
         _currentObjID = 0;
     }
 
-    void MultiTracker::update(const dlib::cv_image<dlib::bgr_pixel> &img) {
+    void MultiTracker::update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector) {
         vector<int> objIDsToDelete;
         for (auto &[objID, tracker]: _objTrackers) {
             double trackingQuality = tracker.update(img);
             if (trackingQuality < _minTrackingQuality) {
                 objIDsToDelete.emplace_back(objID);
+            } else {
+                auto bbox = getObjectBbox(tracker);
+                speedDetector.addObject(objID, bbox);
             }
         }
         for (auto &objID: objIDsToDelete) {
@@ -22,7 +25,8 @@ namespace detector {
         }
     }
 
-    void MultiTracker::addTrackers(const dlib::cv_image<dlib::bgr_pixel> &img, const vector<DetectionResult> &detectedObjects) {
+    void MultiTracker::addTrackers(const dlib::cv_image<dlib::bgr_pixel> &img,
+                                   const vector<DetectionResult> &detectedObjects) {
         for (auto &obj : detectedObjects) {
             auto bbox = obj.bbox;
             int x = bbox.x;
@@ -59,6 +63,7 @@ namespace detector {
                 tracker.start_track(img, dlib::rectangle(x, y, x + width, y + height));
                 _objTrackers[_currentObjID] = tracker;
                 _objLabels[_currentObjID] = obj.getLabel();
+                matchObjID = _currentObjID;
                 _currentObjID++;
             }
         }

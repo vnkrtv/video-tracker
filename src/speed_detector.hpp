@@ -1,14 +1,42 @@
-//
-// Created by vnkrtv on 20.02.2021.
-//
+#include <map>
+#include <unordered_map>
+#include <utility>
 
-#ifndef VIDEO_TRACKER_SPEEDDETECTOR_H
-#define VIDEO_TRACKER_SPEEDDETECTOR_H
+#include "model.hpp"
 
+//#define USE_TAXICAB_SQRT
 
-class speeddetector {
+namespace detector {
 
-};
+    using std::map;
+    using std::unordered_map;
 
+    struct DetectedObject {
 
-#endif //VIDEO_TRACKER_SPEEDDETECTOR_H
+        cv::Point2i centroid;
+        cv::Rect2i bbox;
+
+        explicit DetectedObject(cv::Rect2i);
+
+    };
+
+    class SpeedDetector {
+    private:
+
+        unordered_map<int, vector<DetectedObject>> _detectedObjects;
+
+        static double getDist(const int &, const int &, const int &, const int &);
+
+        static double estimateSpeed(const cv::Point2i &, const cv::Point2i &, const cv::Rect2i &, const double &);
+
+    public:
+
+        explicit SpeedDetector();
+
+        void addObject(const int &, const cv::Rect2i &);
+
+        map<int, double> getObjectsSpeed(const double &);
+
+    };
+
+} // namespace detector

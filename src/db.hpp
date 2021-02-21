@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "centroid_tracker.hpp"
+#include "multitracker.hpp"
 
 namespace detector {
 

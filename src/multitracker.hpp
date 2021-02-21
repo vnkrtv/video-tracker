@@ -1,7 +1,5 @@
-#include <map>
 #include <numeric>
 #include <algorithm>
-#include <thread>
 
 #include <dlib/image_processing.h>
 #include <dlib/gui_widgets.h>
@@ -9,12 +7,11 @@
 #include <dlib/dir_nav.h>
 #include <dlib/opencv/cv_image.h>
 
-#include "model.hpp"
+#include "speed_detector.hpp"
 
 namespace detector {
 
     using std::map;
-    using std::thread;
 
     class MultiTracker {
     private:
@@ -29,7 +26,7 @@ namespace detector {
 
         explicit MultiTracker(const double &);
 
-        void update(const dlib::cv_image<dlib::bgr_pixel> &);
+        void update(const dlib::cv_image<dlib::bgr_pixel> &, SpeedDetector &);
 
         void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &, const vector<DetectionResult> &);
 
