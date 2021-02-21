@@ -17,7 +17,7 @@ namespace detector {
         Args() = default;
 
         static const char *help() {
-            return "Video detection";
+            return "Application for tracking various objects and estimating their speed in video stream";
         }
 
         template<class F>
@@ -27,7 +27,7 @@ namespace detector {
             f(_modelPath, "--model-path", "-m",
               args::help("MobileNetSSD folder path"));
             f(_modelPath, "--output", "-o",
-              args::help("Output file name. By default, video stream is not saving"));
+              args::help("Output file name. By default, processed video stream is not saving"));
             f(_classesSet, "--classes", "-c",
               args::help("Set of detected classes ID. Full set could be found in README. Default classes: persons and cars"));
             f(_confCoefficient, "--confidence", "-t",

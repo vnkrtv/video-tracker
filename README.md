@@ -37,13 +37,18 @@ After installing them is's able to build OpenCV
 
 ## Usage
 ```
-Options: 
+ Options: 
 
+                 -h, --help Show help  
    --video-src, -v [string] Video source (video file, ip camera, video device)  
   --model-path, -m [string] MobileNetSSD folder path  
+      --output, -o [string] Output file name. By default, processed video stream is not 
+                            saving  
  --classes, -c [integer...] Set of detected classes ID. Full set could be found 
                             in README. Default classes: persons and cars  
   --confidence, -t [number] Model's confidence coefficient. Default value: 0.4  
+                --no-window Does not show named window with video stream. False 
+                            by default  
                      --cuda Use GPU with CUDA  
 ```
 ## Model
