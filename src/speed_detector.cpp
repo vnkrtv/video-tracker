@@ -6,18 +6,6 @@ namespace detector {
         centroid = cv::Point2i(bbox.x + (bbox.width / 2), bbox.y + (bbox.height / 2));
     }
 
-    SpeedDetector::SpeedDetector() {
-        _detectedObjects = unordered_map<int, vector<DetectedObject>>();
-    }
-
-    void SpeedDetector::addObject(const int &objID, const cv::Rect2i &objBbox) {
-        if (_detectedObjects.find(objID) != _detectedObjects.end()) {
-            _detectedObjects[objID].emplace_back(DetectedObject(objBbox));
-        } else {
-            _detectedObjects[objID] = vector<DetectedObject>{DetectedObject(objBbox)};
-        }
-    }
-
     double SpeedDetector::getDist(const int &x1, const int &x2, const int &y1, const int &y2) {
 #ifdef USE_TAXICAB_SQRT
         return double(abs(x2 - x1) + abs(y2 - y1));
@@ -41,6 +29,18 @@ namespace detector {
         auto toKmPerHour = 3.6;
         auto speed = dMeters * fps * toKmPerHour;
         return speed;
+    }
+
+    SpeedDetector::SpeedDetector() {
+        _detectedObjects = unordered_map<int, vector<DetectedObject>>();
+    }
+
+    void SpeedDetector::addObject(const int &objID, const cv::Rect2i &objBbox) {
+        if (_detectedObjects.find(objID) != _detectedObjects.end()) {
+            _detectedObjects[objID].emplace_back(DetectedObject(objBbox));
+        } else {
+            _detectedObjects[objID] = vector<DetectedObject>{DetectedObject(objBbox)};
+        }
     }
 
     map<int, double> SpeedDetector::getObjectsSpeed(const double &fps) {

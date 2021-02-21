@@ -2,7 +2,7 @@
 
 namespace detector {
 
-    int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+    int callback(void *notUsed, int argc, char **argv, char **azColName) {
         return 0;
     }
 

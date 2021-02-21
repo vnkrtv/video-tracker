@@ -13,7 +13,7 @@ namespace detector {
         string type;
     };
 
-    int callback(void *, int, char **, char **);
+    int callback(void *notUsed, int argc, char **argv, char **azColName);
 
     class DBException : public std::exception {
     private:
@@ -22,7 +22,7 @@ namespace detector {
 
     public:
 
-        explicit DBException(string);
+        explicit DBException(string errMessage);
 
         virtual const char *what() noexcept;
 
@@ -36,7 +36,7 @@ namespace detector {
 
     public:
 
-        explicit Storage(const string &);
+        explicit Storage(const string &dbFileName);
 
         ~Storage();
 

@@ -26,13 +26,13 @@ namespace detector {
               args::help("Video source (video file, ip camera, video device)"), args::required());
             f(_modelPath, "--model-path", "-m",
               args::help("MobileNetSSD folder path"));
-            f(_modelPath, "--output", "-o",
+            f(_outputFileName, "--output", "-o",
               args::help("Output file name. By default, processed video stream is not saving"));
             f(_classesSet, "--classes", "-c",
               args::help("Set of detected classes ID. Full set could be found in README. Default classes: persons and cars"));
             f(_confCoefficient, "--confidence", "-t",
               args::help("Model's confidence coefficient. Default value: 0.4"));
-            f(_useGpu, "--no-window",
+            f(_noNamedWindow, "--no-window",
               args::help("Does not show named window with video stream. False by default"), args::set(true));
             f(_useGpu, "--cuda",
               args::help("Use GPU with CUDA"), args::set(true));
@@ -59,13 +59,8 @@ namespace detector {
             VideoProcessor processor;
             processor.loadModel(_modelPath, _classesSet, _confCoefficient);
             processor.openVideoSrc(_videoSrc);
-            if (_noNamedWindow && !_outputFileName.empty()) {
-                processor.processToFile(_outputFileName, false);
-            } else if (!_outputFileName.empty()) {
-                processor.processToFile(_outputFileName, true);
-            } else {
-                processor.process();
-            }
+            processor.run(_outputFileName, !_noNamedWindow);
+
             exit(0);
         }
     };

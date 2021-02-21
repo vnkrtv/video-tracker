@@ -24,17 +24,17 @@ namespace detector {
 
     public:
 
-        explicit MultiTracker(const double &);
+        explicit MultiTracker(const double &minTrackingQuality);
 
-        void update(const dlib::cv_image<dlib::bgr_pixel> &, SpeedDetector &);
+        void update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector);
 
-        void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &, const vector<DetectionResult> &);
+        void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &img, const vector<DetectionResult> &detectedObjects);
 
-        [[nodiscard]] static cv::Rect2i getObjectBbox(const dlib::correlation_tracker &) ;
+        [[nodiscard]] static cv::Rect2i getObjectBbox(const dlib::correlation_tracker &tracker) ;
 
         [[nodiscard]] map<int, dlib::correlation_tracker> getTrackers() const;
 
-        [[nodiscard]] string getLabel(const int &);
+        [[nodiscard]] string getLabel(const int &objID);
 
     };
 

@@ -15,7 +15,7 @@ namespace detector {
         cv::Point2i centroid;
         cv::Rect2i bbox;
 
-        explicit DetectedObject(cv::Rect2i);
+        explicit DetectedObject(cv::Rect2i bbox);
 
     };
 
@@ -24,17 +24,17 @@ namespace detector {
 
         unordered_map<int, vector<DetectedObject>> _detectedObjects;
 
-        static double getDist(const int &, const int &, const int &, const int &);
+        static double getDist(const int &x1, const int &x2, const int &y1, const int &y2);
 
-        static double estimateSpeed(const cv::Point2i &, const cv::Point2i &, const cv::Rect2i &, const double &);
+        static double estimateSpeed(const cv::Point2i &prevLoc, const cv::Point2i &curLoc, const cv::Rect2i &bbox, const double &fps);
 
     public:
 
         explicit SpeedDetector();
 
-        void addObject(const int &, const cv::Rect2i &);
+        void addObject(const int &objID, const cv::Rect2i &objBbox);
 
-        map<int, double> getObjectsSpeed(const double &);
+        map<int, double> getObjectsSpeed(const double &fps);
 
     };
 
