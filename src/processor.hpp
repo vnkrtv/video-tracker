@@ -17,7 +17,6 @@ namespace detector {
         float _confCoefficient{};
 
         MultiTracker _multiTracker;
-        SpeedDetector _speedDetector;
 
         void processFrame(cv::Mat &frame, int &frameCounter);
 

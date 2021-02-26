@@ -5,10 +5,11 @@ namespace detector {
     MultiTracker::MultiTracker(const double &minTrackingQuality): _minTrackingQuality(minTrackingQuality) {
         _objTrackers = map<int, dlib::correlation_tracker>();
         _objLabels = map<int, string>();
+        _objClasses = map<int, int>();
         _currentObjID = 0;
     }
 
-    void MultiTracker::update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector) {
+    void MultiTracker::update(const dlib::cv_image<dlib::bgr_pixel> &img) {
         vector<int> objIDsToDelete;
         for (auto &[objID, tracker]: _objTrackers) {
             double trackingQuality = tracker.update(img);
@@ -16,11 +17,11 @@ namespace detector {
                 objIDsToDelete.emplace_back(objID);
             } else {
                 auto bbox = getObjectBbox(tracker);
-                speedDetector.addObject(objID, bbox);
+                _speedDetector.addObject(objID, bbox, _objClasses[objID]);
             }
         }
         for (auto &objID: objIDsToDelete) {
-            std::clog << "Remove tracker with ID: " << objID << " from list of getTrackers" << std::endl;
+            std::clog << "Remove tracker ID(" << objID << ") from list of trackers" << std::endl;
             _objTrackers.erase(objID);
         }
     }
@@ -63,7 +64,7 @@ namespace detector {
                 tracker.start_track(img, dlib::rectangle(x, y, x + width, y + height));
                 _objTrackers[_currentObjID] = tracker;
                 _objLabels[_currentObjID] = obj.getLabel();
-                matchObjID = _currentObjID;
+                _objClasses[_currentObjID] = obj.classId;
                 _currentObjID++;
             }
         }
@@ -82,6 +83,10 @@ namespace detector {
 
     [[nodiscard]] map<int, dlib::correlation_tracker> MultiTracker::getTrackers() const {
         return _objTrackers;
+    }
+
+    [[nodiscard]] map<int, double> MultiTracker::getObjectsSpeed(const double &fps) {
+        return _speedDetector.getObjectsSpeed(fps);
     }
 
     [[nodiscard]] string MultiTracker::getLabel(const int &objID) {

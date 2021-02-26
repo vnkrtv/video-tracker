@@ -1,5 +1,6 @@
 #include <numeric>
 #include <algorithm>
+#include <thread>
 
 #include <dlib/image_processing.h>
 #include <dlib/gui_widgets.h>
@@ -12,11 +13,15 @@
 namespace detector {
 
     using std::map;
+    using std::thread;
 
     class MultiTracker {
     private:
 
+        SpeedDetector _speedDetector;
+
         map<int, dlib::correlation_tracker> _objTrackers;
+        map<int, int> _objClasses;
         map<int, string> _objLabels;
 
         double _minTrackingQuality;
@@ -26,7 +31,7 @@ namespace detector {
 
         explicit MultiTracker(const double &minTrackingQuality);
 
-        void update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector);
+        void update(const dlib::cv_image<dlib::bgr_pixel> &img);
 
         void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &img, const vector<DetectionResult> &detectedObjects);
 
@@ -34,8 +39,44 @@ namespace detector {
 
         [[nodiscard]] map<int, dlib::correlation_tracker> getTrackers() const;
 
+        [[nodiscard]] map<int, double> getObjectsSpeed(const double &fps);
+
         [[nodiscard]] string getLabel(const int &objID);
 
     };
+
+//    class ParallelTracker {
+//    private:
+//
+//        unordered_map<int, MultiTracker> _workerTrackers;
+//        int _nWorkers;
+//        unordered_map<int,int> _workersLoad;
+//
+//        int getWorker() {
+//            int minLoadWorkerID = 0;
+//            int minWorkerLoad = 100;
+//            for (auto &[workerID, workerLoad]: _workersLoad) {
+//                if (workerLoad < minWorkerLoad) {
+//                    minLoadWorkerID = workerID;
+//                }
+//            }
+//            return minLoadWorkerID;
+//        }
+//
+//    public:
+//
+//        explicit ParallelTracker(const int &nWorkers, const double &minTrackingQuality): _nWorkers(nWorkers) {
+//            _workerTrackers = unordered_map<int, MultiTracker>();
+//            for (int i = 0; i < nWorkers; i++) {
+//                _workerTrackers[i] = MultiTracker(minTrackingQuality);
+//                _workersLoad[i] = 0;
+//            }
+//        }
+//
+//        void update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector) {
+//
+//        }
+//
+//    };
 
 } // namespace detector

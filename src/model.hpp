@@ -16,7 +16,7 @@ namespace detector {
     using std::unordered_map;
     using std::set;
 
-    enum ModelClass {
+    enum ObjectClass {
         CL_BACKGROUND = 0,
         CL_AEROPLANE,
         CL_BICYCLE,

@@ -19,7 +19,7 @@ namespace detector {
         }
         dlib::cv_image<dlib::bgr_pixel> img(cvIplImage(frame));
 
-        _multiTracker.update(img, _speedDetector);
+        _multiTracker.update(img);
         if (!(frameCounter % 10)) {
             auto detectedObjects = _net.detectObjects(frame, _classesSet, _confCoefficient);
             _multiTracker.addTrackers(img, detectedObjects);
@@ -30,7 +30,7 @@ namespace detector {
         auto fps = 1000. / duration;
         cv::putText(frame, "FPS: " + std::to_string(fps), cv::Point2i(15, 15),
                     fontFace, fontScale, color);
-        auto objSpeed = _speedDetector.getObjectsSpeed(fps);
+        auto objSpeed = _multiTracker.getObjectsSpeed(fps);
 
         for (auto &[objID, tracker]: _multiTracker.getTrackers()) {
             auto bbox = MultiTracker::getObjectBbox(tracker);
