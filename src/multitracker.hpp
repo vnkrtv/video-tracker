@@ -35,7 +35,7 @@ namespace detector {
 
         void addTrackers(const dlib::cv_image<dlib::bgr_pixel> &img, const vector<DetectionResult> &detectedObjects);
 
-        [[nodiscard]] static cv::Rect2i getObjectBbox(const dlib::correlation_tracker &tracker) ;
+        [[nodiscard]] static cv::Rect2i getObjectBbox(const dlib::correlation_tracker &tracker);
 
         [[nodiscard]] map<int, dlib::correlation_tracker> getTrackers() const;
 
@@ -50,7 +50,7 @@ namespace detector {
 //
 //        unordered_map<int, MultiTracker> _workerTrackers;
 //        int _nWorkers;
-//        unordered_map<int,int> _workersLoad;
+//        unordered_map<int, int> _workersLoad;
 //
 //        int getWorker() {
 //            int minLoadWorkerID = 0;
@@ -65,16 +65,31 @@ namespace detector {
 //
 //    public:
 //
-//        explicit ParallelTracker(const int &nWorkers, const double &minTrackingQuality): _nWorkers(nWorkers) {
+//        explicit ParallelTracker(const int &nWorkers, const double &minTrackingQuality) : _nWorkers(nWorkers) {
 //            _workerTrackers = unordered_map<int, MultiTracker>();
 //            for (int i = 0; i < nWorkers; i++) {
-//                _workerTrackers[i] = MultiTracker(minTrackingQuality);
+//                _workerTrackers.insert(std::make_pair(i, MultiTracker(minTrackingQuality)));
 //                _workersLoad[i] = 0;
 //            }
 //        }
 //
-//        void update(const dlib::cv_image<dlib::bgr_pixel> &img, SpeedDetector &speedDetector) {
+//        void addTrackers(dlib::cv_image<dlib::bgr_pixel> img, vector<DetectionResult> detectedObjects) {
 //
+//        }
+//
+//        void update(dlib::cv_image<dlib::bgr_pixel> img) {
+//            auto threads = vector<std::thread>();
+//            threads.reserve(_nWorkers);
+//            for (int i = 0; i < _nWorkers; i++) {
+//                threads.emplace_back(thread(
+//                        [](MultiTracker &multiTracker, dlib::cv_image<dlib::bgr_pixel> img) {
+//                            multiTracker.update(img);
+//                        }, std::ref(_workerTrackers[i]), img)
+//                );
+//            }
+//            for_each(threads.begin(), threads.end(), [&](std::thread &th) {
+//                th.join();
+//            });
 //        }
 //
 //    };

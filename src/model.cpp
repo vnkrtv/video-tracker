@@ -4,35 +4,35 @@
 
 namespace detector {
 
-    unordered_map<int, string> class2name{
-            {CL_BACKGROUND,   "Background"},
-            {CL_AEROPLANE,    "Aeroplane"},
-            {CL_BICYCLE,      "Bicycle"},
-            {CL_BIRD,         "Bird"},
-            {CL_BOAT,         "Boat"},
-            {CL_BOTTLE,       "Bottle"},
-            {CL_BUS,          "Bus"},
-            {CL_CAR,          "Car"},
-            {CL_CAT,          "Cat"},
-            {CL_CHAIR,        "Chair"},
-            {CL_COW,          "Cow"},
-            {CL_DINING_TABLE, "Dining table"},
-            {CL_DOG,          "Dog"},
-            {CL_HORSE,        "Horse"},
-            {CL_MOTORBIKE,    "Motorbike"},
-            {CL_PERSON,       "Person"},
-            {CL_POTTED_PLANT, "Potted plant"},
-            {CL_SHEEP,        "Sheep"},
-            {CL_SOFA,         "Sofa"},
-            {CL_TRAIN,        "Train"},
-            {CL_TV_MONITOR,   "TV Monitor"}
+    unordered_map<ObjectClass, string> class2name{
+            {ObjectClass::BACKGROUND,   "Background"},
+            {ObjectClass::AEROPLANE,    "Aeroplane"},
+            {ObjectClass::BICYCLE,      "Bicycle"},
+            {ObjectClass::BIRD,         "Bird"},
+            {ObjectClass::BOAT,         "Boat"},
+            {ObjectClass::BOTTLE,       "Bottle"},
+            {ObjectClass::BUS,          "Bus"},
+            {ObjectClass::CAR,          "Car"},
+            {ObjectClass::CAT,          "Cat"},
+            {ObjectClass::CHAIR,        "Chair"},
+            {ObjectClass::COW,          "Cow"},
+            {ObjectClass::DINING_TABLE, "Dining table"},
+            {ObjectClass::DOG,          "Dog"},
+            {ObjectClass::HORSE,        "Horse"},
+            {ObjectClass::MOTORBIKE,    "Motorbike"},
+            {ObjectClass::PERSON,       "Person"},
+            {ObjectClass::POTTED_PLANT, "Potted plant"},
+            {ObjectClass::SHEEP,        "Sheep"},
+            {ObjectClass::SOFA,         "Sofa"},
+            {ObjectClass::TRAIN,        "Train"},
+            {ObjectClass::TV_MONITOR,   "TV Monitor"}
     };
 
     DetectionResult::DetectionResult(int _classId, int _confPercent, cv::Rect2i _bbox) :
             classId(_classId), confPercent(_confPercent), bbox(std::move(_bbox)) {}
 
     string DetectionResult::getLabel() const {
-        return class2name[classId] + ": " + std::to_string(confPercent) + "%";
+        return class2name[static_cast<ObjectClass>(classId)] + ": " + std::to_string(confPercent) + "%";
     }
 
     cv::Mat MobileNetSSD::forward(cv::Mat &frame) {

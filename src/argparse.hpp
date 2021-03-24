@@ -7,7 +7,7 @@ namespace detector {
 
     struct Args {
         string _videoSrc;
-        string _modelPath = "MobileNetSSD";
+        string _modelPath = "model/MobileNetSSD";
         string _outputFileName;
         set<int> _classesSet{};
         float _confCoefficient = 0.4;
@@ -29,7 +29,8 @@ namespace detector {
             f(_outputFileName, "--output", "-o",
               args::help("Output file name. By default, processed video stream is not saving"));
             f(_classesSet, "--classes", "-c",
-              args::help("Set of detected classes ID. Full set could be found in README. Default classes: persons and cars"));
+              args::help(
+                      "Set of detected classes ID. Full set could be found in README. Default classes: persons and cars"));
             f(_confCoefficient, "--confidence", "-t",
               args::help("Model's confidence coefficient. Default value: 0.4"));
             f(_noNamedWindow, "--no-window",
@@ -44,7 +45,10 @@ namespace detector {
                 return;
             }
             if (_classesSet.empty()) {
-                _classesSet = set<int>{CL_PERSON, CL_CAR};
+                _classesSet = set<int>{
+                        static_cast<int>(ObjectClass::PERSON),
+                        static_cast<int>(ObjectClass::CAR)
+                };
             }
             if (_useGpu) {
                 cv::cuda::setDevice(cv::cuda::getDevice());

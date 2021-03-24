@@ -17,14 +17,14 @@ Application for tracking various objects and estimating their speed in video str
 Installing all system requirements described in [this article](https://funvision.blogspot.com/2019/12/opencv-web-camera-and-video-streams-in.html)  
 After installing them is's able to build OpenCV
 
-- ```cd opencv```
+- ```cd contrib/opencv```
 - ```mkdir build && cd build```
 - ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_GSTREAMER=ON -D WITH_FFMPEG=ON [-D WITH_CUDA=ON -D ENABLE_FAST_MATH=1 -D CUDA_FAST_MATH=1 -D WITH_CUBLAS=1]..```
 - ```make [-j 9]```
 - ```sudo make install```
 
 ### dlib installation
-- ```cd dlib/dlib```
+- ```cd contrib/dlib/dlib```
 - ```mkdir build && cd build```
 - ```cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=1 -D USE_AVX_INSTRUCTIONS=ON [-D DLIB_USE_CUDA=1] ..```
 - ```make [-j 9]```

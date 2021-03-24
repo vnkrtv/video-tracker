@@ -16,28 +16,28 @@ namespace detector {
     using std::unordered_map;
     using std::set;
 
-    enum ObjectClass {
-        CL_BACKGROUND = 0,
-        CL_AEROPLANE,
-        CL_BICYCLE,
-        CL_BIRD,
-        CL_BOAT,
-        CL_BOTTLE,
-        CL_BUS,
-        CL_CAR,
-        CL_CAT,
-        CL_CHAIR,
-        CL_COW,
-        CL_DINING_TABLE,
-        CL_DOG,
-        CL_HORSE,
-        CL_MOTORBIKE,
-        CL_PERSON,
-        CL_POTTED_PLANT,
-        CL_SHEEP,
-        CL_SOFA,
-        CL_TRAIN,
-        CL_TV_MONITOR
+    enum class ObjectClass: int {
+        BACKGROUND = 0,
+        AEROPLANE,
+        BICYCLE,
+        BIRD,
+        BOAT,
+        BOTTLE,
+        BUS,
+        CAR,
+        CAT,
+        CHAIR,
+        COW,
+        DINING_TABLE,
+        DOG,
+        HORSE,
+        MOTORBIKE,
+        PERSON,
+        POTTED_PLANT,
+        SHEEP,
+        SOFA,
+        TRAIN,
+        TV_MONITOR
     };
 
     struct DetectionResult {

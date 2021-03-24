@@ -2,32 +2,32 @@
 
 namespace detector {
 
-    unordered_map<int, float> class2width{
-            {CL_BACKGROUND,   12.},
-            {CL_AEROPLANE,    12.},
-            {CL_BICYCLE,      12.},
-            {CL_BIRD,         12.},
-            {CL_BOAT,         12.},
-            {CL_BOTTLE,       12.},
-            {CL_BUS,          2.5},
-            {CL_CAR,          1.6},
-            {CL_CAT,          12.},
-            {CL_CHAIR,        12.},
-            {CL_COW,          12.},
-            {CL_DINING_TABLE, 12.},
-            {CL_DOG,          12.},
-            {CL_HORSE,        12.},
-            {CL_MOTORBIKE,    12.},
-            {CL_PERSON,       0.5},
-            {CL_POTTED_PLANT, 12.},
-            {CL_SHEEP,        12.},
-            {CL_SOFA,         12.},
-            {CL_TRAIN,        12.},
-            {CL_TV_MONITOR,   12.},
+    unordered_map<ObjectClass, float> class2width{
+            {ObjectClass::BACKGROUND,   12.},
+            {ObjectClass::AEROPLANE,    12.},
+            {ObjectClass::BICYCLE,      12.},
+            {ObjectClass::BIRD,         12.},
+            {ObjectClass::BOAT,         12.},
+            {ObjectClass::BOTTLE,       12.},
+            {ObjectClass::BUS,          2.5},
+            {ObjectClass::CAR,          1.6},
+            {ObjectClass::CAT,          12.},
+            {ObjectClass::CHAIR,        12.},
+            {ObjectClass::COW,          12.},
+            {ObjectClass::DINING_TABLE, 12.},
+            {ObjectClass::DOG,          12.},
+            {ObjectClass::HORSE,        12.},
+            {ObjectClass::MOTORBIKE,    12.},
+            {ObjectClass::PERSON,       0.5},
+            {ObjectClass::POTTED_PLANT, 12.},
+            {ObjectClass::SHEEP,        12.},
+            {ObjectClass::SOFA,         12.},
+            {ObjectClass::TRAIN,        12.},
+            {ObjectClass::TV_MONITOR,   12.},
     };
 
     DetectedObject::DetectedObject(cv::Rect2i bbox, const int &objClass) : bbox(std::move(bbox)) {
-        meanWidth = class2width[objClass];
+        meanWidth = class2width[static_cast<ObjectClass>(objClass)];
         centroid = cv::Point2i(bbox.x + (bbox.width / 2), bbox.y + (bbox.height / 2));
     }
 
@@ -46,11 +46,11 @@ namespace detector {
                                         const float &meanObjWidth,
                                         const double &fps) {
         auto dPixels = getDist(prevLoc.x, curLoc.x, prevLoc.y, curLoc.y);
-        std::clog << "dPixels: " << dPixels << std::endl;
+//        std::clog << "dPixels: " << dPixels << std::endl;
         auto pixelPerMeter = (bbox.width / meanObjWidth);
-        std::clog << "pixelPerMeter: " << pixelPerMeter << std::endl;
+//        std::clog << "pixelPerMeter: " << pixelPerMeter << std::endl;
         auto dMeters = dPixels / pixelPerMeter;
-        std::clog << "dMeters: " << dMeters << std::endl;
+//        std::clog << "dMeters: " << dMeters << std::endl;
         auto speed = dMeters * fps * 3.6; // 3.6 - for converting m/s to km/h
         return speed;
     }
